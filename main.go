@@ -14,7 +14,7 @@ import (
 
 // WEBSERVERPORT listen connections
 const (
-	WEBSERVERPORT = ":8080"
+	WEBSERVERPORT = ":8081"
 )
 
 func main() {
