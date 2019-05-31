@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ealipio/go-rest/endpoints"
 	"github.com/ealipio/go-rest/handlers"
 	"github.com/ealipio/go-rest/middleware"
 	ghandlers "github.com/gorilla/handlers"
@@ -28,25 +27,14 @@ func main() {
 	r.HandleFunc("/friends", handlers.FriendsHandler).Methods("GET")
 	r.HandleFunc("/find", handlers.FindHandler).Methods("GET,POST")
 	r.HandleFunc("/profile", handlers.MyProfileHandler).Methods("GET")
-	r.HandleFunc("/profile/{username}", handlers.ProfileHandler).Methods("GET")
-	r.HandleFunc("/triggerpanic", handlers.TriggerPanicHandler).Methods("GET")
-	r.HandleFunc("/foo", handlers.FooHandler).Methods("GET")
+	r.HandleFunc("/profile/{username}", handlers.ProfileHandler)
+	r.HandleFunc("/triggerpanic", handlers.TriggerPanicHandler)
+	r.HandleFunc("/foo", handlers.FooHandler)
 	r.HandleFunc("/signup", handlers.SignUpHandler).Methods("GET", "POST")
 	r.HandleFunc("/postpreview", handlers.PostPreviewHandler).Methods("GET", "POST")
-
+	r.HandleFunc("/upload-image", handlers.UploadImageHandler).Methods("GET", "POST")
+	r.HandleFunc("/upload-video", handlers.UploadVideoHandler).Methods("GET", "POST")
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.Handle("/", middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r)))
-
-	r.HandleFunc("/restapi/socialmediapost/{username}", endpoints.FetchPostsEndpoint).Methods("GET")
-	r.HandleFunc("/restapi/socialmediapost/{postid}", endpoints.CreatePostEndpoint).Methods("POST")
-	r.HandleFunc("/restapi/socialmediapost/{postid}", endpoints.UpdatePostEndpoint).Methods("PUT")
-	r.HandleFunc("/restapi/socialmediapost/{postid}", endpoints.DeletePostEndpoint).Methods("DELETE")
-
-	//http.Handle("/", r)
-	//http.Handle("/", ghandlers.LoggingHandler(os.Stdout, r))
-	//http.Handle("/", middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r)))
-	//http.Handle("/", middleware.ContextExampleHandler(middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r))))
-
 	http.ListenAndServe(WEBSERVERPORT, nil)
-
 }
