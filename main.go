@@ -14,7 +14,7 @@ import (
 
 // WEBSERVERPORT listen connections
 const (
-	WEBSERVERPORT = ":8081"
+	WEBSERVERPORT = ":8080"
 )
 
 func main() {
@@ -31,6 +31,11 @@ func main() {
 	r.HandleFunc("/profile/{username}", handlers.ProfileHandler).Methods("GET")
 	r.HandleFunc("/triggerpanic", handlers.TriggerPanicHandler).Methods("GET")
 	r.HandleFunc("/foo", handlers.FooHandler).Methods("GET")
+	r.HandleFunc("/signup", handlers.SignUpHandler).Methods("GET", "POST")
+	r.HandleFunc("/postpreview", handlers.PostPreviewHandler).Methods("GET", "POST")
+
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	http.Handle("/", middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r)))
 
 	r.HandleFunc("/restapi/socialmediapost/{username}", endpoints.FetchPostsEndpoint).Methods("GET")
 	r.HandleFunc("/restapi/socialmediapost/{postid}", endpoints.CreatePostEndpoint).Methods("POST")
@@ -40,7 +45,7 @@ func main() {
 	//http.Handle("/", r)
 	//http.Handle("/", ghandlers.LoggingHandler(os.Stdout, r))
 	//http.Handle("/", middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r)))
-	http.Handle("/", middleware.ContextExampleHandler(middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r))))
+	//http.Handle("/", middleware.ContextExampleHandler(middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r))))
 
 	http.ListenAndServe(WEBSERVERPORT, nil)
 
